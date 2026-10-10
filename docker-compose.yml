@@ -1,0 +1,51 @@
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      PRODUCT_SERVICE_URL: http://product-service:3001
+      ORDER_SERVICE_URL: http://order-service:3002
+    depends_on:
+      - product-service
+      - order-service
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "3001:3001"
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "3002:3002"
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - api-gateway
+      - product-service
+      - order-service
+
+  grafana:
+    image: grafana/grafana:12.1.0
+    ports:
+      - "3003:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+volumes:
+  grafana-data:
