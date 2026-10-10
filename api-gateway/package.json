@@ -1,0 +1,15 @@
+
+{
+  "name": "api-gateway",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API Gateway for Mini Shop Monitoring",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "prom-client": "^15.1.3"
+  }
+}
